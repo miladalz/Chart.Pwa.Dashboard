@@ -1,0 +1,120 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    canvas {
+        border: 1px dotted red;
+    }
+</style>
+
+<span id="time">0</span> Seconds
+<div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" style="height: 300px">
+        <canvas id="barChart"></canvas>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" style="height: 300px">
+        <canvas id="pieChart"></canvas>
+    </div>
+</div>
+
+<script>
+    var barOptions = {
+        plugins: {
+            legend: {
+                labels: {
+                    font: {
+                        size: 13,
+                        family: 'vazir'
+                    }
+                }
+            }
+        },
+        maintainAspectRatio: false,
+        responsive: true,
+        scales: {
+            y: {
+                ticks: {
+                    color: 'black',
+                    beginAtZero: true,
+                    font: {
+                        size: 13,
+                        family: 'vazir'
+                    }
+                }
+            },
+            x: {
+                ticks: {
+                    color: 'black',
+                    font: {
+                        size: 13,
+                        family: 'vazir'
+                    }
+                }
+            }
+        }
+    };
+
+    var countDown = 10;
+
+    var getData = function () {
+        $.ajax({
+            type: "GET",
+            url: "/home/GetBarChart",
+            cache: false,
+            success: function (result) {
+                drawBarChart("barChart", result);
+                drawPieChart("pieChart", result);
+            }
+        });
+    }
+
+    function drawBarChart(id, result) {
+        let chartStatus = Chart.getChart(id);
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+        }
+        var barChart = $('#' + id);
+        new Chart(barChart, {
+            type: 'bar',
+            data:
+            {
+                labels: result.labels,
+                datasets: result.dataSets
+            },
+            options: barOptions
+        });
+    }
+
+    function drawPieChart(id, result) {
+        let chartStatus = Chart.getChart(id);
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+        }
+        var pieChart = $('#' + id);
+        new Chart(pieChart, {
+            type: 'pie',
+            data:
+            {
+                labels: result.labels,
+                datasets: result.dataSets
+            }
+        });
+    }
+
+    function startCountdown(seconds) {
+        let counter = seconds;
+        const interval = setInterval(() => {
+            if (counter <= -1) {
+                getData();
+                counter = countDown;
+            } else {
+                $('#time').text(counter);
+                counter--;
+            }
+        }, 1000);
+    }
+
+    getData();
+
+    startCountdown(countDown);
+</script>
