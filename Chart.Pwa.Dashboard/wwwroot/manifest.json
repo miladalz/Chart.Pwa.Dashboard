@@ -1,7 +1,7 @@
 ﻿{
-  "name": "داشبورد سیام",
-  "short_name": "SIAM-DASH",
-  "description": "The most awesome application in the world",
+  "name": "Chart.Pwa.Dashboard",
+  "short_name": "CPD",
+  "description": "Progressive web app that uses chart js.",
   "icons": [
     {
       "src": "/images/icons/icon192.png",
